@@ -1,11 +1,36 @@
-import bcrypt from "bcrypt";
-import mongoose from "mongoose";
+const mongoose = require("mongoose");
+const bcrypt = require("bcrypt");
 
 const UserSchema = new mongoose.Schema({
   userName: { type: String, unique: true },
   email: { type: String, unique: true },
   password: String,
   avatar: String,
+  cloudinaryId: String,
+  role: {
+    type: String,
+    enum: ["user", "admin"],
+    default: "user",
+  },
+  createdAt: { type: Date, default: Date.now },
+  posts: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      refPath: "postModel",
+    },
+  ],
+  postModel: {
+    type: String,
+    enum: [
+      "Terp",
+      "Scent",
+      "Benefit",
+      "Nature",
+      "Effect",
+      "Strain",
+      "Research",
+    ],
+  },
   edits: [
     {
       type: mongoose.Schema.Types.ObjectId,
@@ -15,8 +40,42 @@ const UserSchema = new mongoose.Schema({
   ],
   editModel: {
     type: String,
-    enum: ["Terp", "Scent", "Benefit", "Nature", "Effect", "Strain", "Research"],
-    required: true,
+    enum: [
+      "Terp",
+      "Scent",
+      "Benefit",
+      "Nature",
+      "Effect",
+      "Strain",
+      "Research",
+    ],
+  },
+  comments: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Comment",
+      default: [],
+    },
+  ],
+  likes: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      refPath: "likeModel",
+      default: [],
+    },
+  ],
+  likeModel: {
+    type: String,
+    enum: [
+      "Terp",
+      "Scent",
+      "Benefit",
+      "Nature",
+      "Effect",
+      "Strain",
+      "Research",
+      "Comment",
+    ],
   },
 });
 
@@ -54,4 +113,4 @@ UserSchema.methods.comparePassword = function comparePassword(
 
 const User = mongoose.model("User", UserSchema);
 
-export default User;
+module.exports = User;

@@ -1,9 +1,20 @@
-import express from 'express'
+const express = require("express");
+const router = express.Router();
+const upload = require("../middleware/multer");
+const terpsController = require("../controllers/terps");
+const { ensureAuth, ensureGuest } = require("../middleware/auth");
 
-import { getTerps } from '../controllers/terps.js'
+//Terp Routes - simplified for now
+router.get("/:id", ensureAuth, terpsController.getTerp);
 
-const router = express.Router()
+router.post("/createTerp", upload.single("file"), terpsController.createTerp);
 
-router.get('/', getTerps)
+router.put("/upvote/:id", terpsController.upvoteTerp);
 
-export default router
+router.put("/downvote/:id", terpsController.downvoteTerp);
+
+router.put("/edit/:id", terpsController.editTerp);
+
+router.delete("/deleteTerp/:id", terpsController.deleteTerp);
+
+module.exports = router;
